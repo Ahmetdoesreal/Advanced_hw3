@@ -1,3 +1,5 @@
+// Ahmet Deniz Sezgin — 2300005633
+
 import { FILTERS } from "./filter";
 
 export type Status = 'todo' | 'in-progress' | 'done'

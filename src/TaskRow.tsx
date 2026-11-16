@@ -1,3 +1,6 @@
+// Ahmet Deniz Sezgin — 2300005633
+//i dont think i made any changes to this file tho
+
 import type { Task } from "./taskReducer";
 
 type TaskRowProps = { task: Task; onNext: () => void; onDelete: () => void };

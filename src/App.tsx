@@ -1,3 +1,5 @@
+// Ahmet Deniz Sezgin — 2300005633
+
 // STARTING POINT: the sample Task Manager (state in App with useReducer, passed down as props).
 // Assignment 3: change the state shape, add actions, add a filter bar (see the handout).
 import { useReducer } from "react";
@@ -74,9 +76,16 @@ function AddFilterRow(
         </div>
     );
 }
-function AddClearButton({ dispatch }: { dispatch: Dispatch<Action> }) {
+function AddClearButton({ state,dispatch }: { state:State;dispatch: Dispatch<Action> }) {
     function clearDone() {
         dispatch({ type: "clearDone" });
+    }
+    if(filterTasks(state.tasks,'done').length===0){
+        return (
+        <form action={clearDone}>
+            <button disabled={true} type="submit">Clear Done Tasks</button>
+        </form>
+    );
     }
     return (
         <form action={clearDone}>
@@ -84,9 +93,16 @@ function AddClearButton({ dispatch }: { dispatch: Dispatch<Action> }) {
         </form>
     );
 }
-function AddUndoButton({ dispatch }: { dispatch: Dispatch<Action> }) {
+function AddUndoButton({state, dispatch }: { state:State;dispatch: Dispatch<Action> }) {
     function undo() {
         dispatch({ type: "undo" });
+    }
+    if (state.past.length===0){
+        return (
+        <form action={undo}>
+            <button disabled={true} type="submit">Undo</button>
+        </form>
+    );
     }
     return (
         <form action={undo}>
@@ -142,8 +158,8 @@ export default function App() {
         <main>
             <h1>Task Manager</h1>
             <AddForm dispatch={dispatch} />
-            <AddClearButton dispatch={dispatch} />
-            <AddUndoButton dispatch={dispatch} />
+            <AddClearButton state={state} dispatch={dispatch} />
+            <AddUndoButton state={state} dispatch={dispatch} />
             <TaskList tasks={state.tasks} dispatch={dispatch} />
             <AddFilterRow dispatch={dispatch} state={state} />
             <FilteredTasks tasks={visibleTasks} dispatch={dispatch} />

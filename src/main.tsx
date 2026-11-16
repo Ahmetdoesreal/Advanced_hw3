@@ -1,3 +1,5 @@
+// Ahmet Deniz Sezgin — 2300005633
+
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
