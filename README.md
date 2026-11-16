@@ -93,13 +93,21 @@ npm run test
 
 ## Bonus 3: Explain your reducer
 
-The reducer must be pure: the same state and action should produce the same result without changing the input. My reducer uses a copy of the original variable to work on and returns the copy. Mutating existing state can make React miss an update because the object identity stays the same. It can also corrupt task lists saved for undo.
+**1. Keeping the old state safe**
 
-The caller generates task IDs with `crypto.randomUUID()` before dispatching. The reducer only uses the provided ID and does not create any random or time values. Creating random IDs inside it would make identical inputs produce different outputs and make testing harder.
+The reducer takes the current state and an action, then returns the next state. The same inputs should always give the same result. I use spread syntax, map and filter to create new objects and arrays where needed. Changing the old state directly can make React miss an update. It can also damage the old task lists saved for Undo.
 
-The visible list and counts are derived from `state.tasks` during rendering. Keeping them separately in state would require updating several values after each action. For example, advancing a task to done could leave an outdated todo count if one update was forgotten.
+**2. Creating IDs in the form**
 
-Putting the filter in reducer state keeps task and filter updates together. Actions such as `clearDone` and `undo` preserve the selected filter, and tests can check this behavior directly. The tradeoff is more action and dispatch code for a simple selection. A separate useState could make filter selection shorter to implement, but would spread the application state across two places.
+The add form creates an ID with `crypto.randomUUID()` and sends it with the title. The reducer just uses that ID. If it created a random ID itself, the same action and state could give different results, making tests harder.
+
+**3. Calculating lists and counts**
+
+All tasks are already in `state.tasks`, so I calculate the visible list and button counts from them during rendering. If I stored the todo count separately, I could forget to update it when a task becomes done. Recalculating the count avoids showing an old number.
+
+**4. Keeping the filter in state**
+
+Keeping the filter with the tasks means I manage both in one reducer. When I clear completed tasks or undo a change, I can keep the selected filter. The cost is writing an action and dispatch for filter selection. A separate `useState` would need less code, but state would then be managed in two places.
 
 ## Bonus 4: Git repository
 
