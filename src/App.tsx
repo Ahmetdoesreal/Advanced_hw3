@@ -1,7 +1,7 @@
 // STARTING POINT: the sample Task Manager (state in App with useReducer, passed down as props).
 // Assignment 3: change the state shape, add actions, add a filter bar (see the handout).
 import { useReducer } from 'react'
-import { taskReducer, type Task, type Action } from './taskReducer'
+import { taskReducer, type Task, type Action ,type State,type Filter,initialState} from './taskReducer'
 import TaskRow from './TaskRow'
 import type { Dispatch } from 'react'
 
@@ -17,6 +17,17 @@ function AddForm({ dispatch }: { dispatch: Dispatch<Action> }) {
     </form>
   )
 }
+function AddClearButton({ dispatch }: { dispatch: Dispatch<Action> }) {
+  function clearDone() {
+    dispatch({ type: 'clearDone'})
+  }
+  return (
+    <form action={clearDone}>
+      <button type="submit">Clear Done Tasks</button>
+    </form>
+  )
+}
+
 
 function TaskList({ tasks, dispatch }: { tasks: Task[]; dispatch: Dispatch<Action> }) {
   return (
@@ -34,12 +45,13 @@ function TaskList({ tasks, dispatch }: { tasks: Task[]; dispatch: Dispatch<Actio
 }
 
 export default function App() {
-  const [tasks, dispatch] = useReducer(taskReducer, [])
+  const [state, dispatch] = useReducer(taskReducer, initialState)
   return (
     <main>
       <h1>Task Manager</h1>
       <AddForm dispatch={dispatch} />
-      <TaskList tasks={tasks} dispatch={dispatch} />
+      <AddClearButton dispatch={dispatch} />
+      <TaskList tasks={state.tasks} dispatch={dispatch} />
     </main>
   )
 }
