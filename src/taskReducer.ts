@@ -2,12 +2,13 @@ import { FILTERS } from "./filter";
 
 export type Status = 'todo' | 'in-progress' | 'done'
 export type Task = { id: string; title: string; status: Status }
-export type State = { tasks: Task[]; filter: Filter }
+export type State = { tasks: Task[]; filter: Filter; past: Task[][]}
 export type Filter = 'all' | 'todo' | 'in-progress' | 'done'
 
 export const initialState: State = {
     tasks: [],
-    filter: 'all'
+    filter: 'all',
+    past: []
 }
 
 export type Action =
@@ -16,6 +17,7 @@ export type Action =
     | { type: 'remove'; id: string }
     | { type: 'setFilter'; filter: Filter }
     | { type: 'clearDone' }
+    | {type: 'undo'}
 
 const NEXT: Record<Status, Status> = {
     todo: 'in-progress',
@@ -26,20 +28,28 @@ const NEXT: Record<Status, Status> = {
 export function taskReducer(state: State, action: Action): State {
     switch (action.type) {
         case 'add':
-            return { ...state, tasks: [...state.tasks, { id: action.id, title: action.title, status: 'todo' }] }
+            return { ...state, tasks: [...state.tasks, { id: action.id, title: action.title, status: 'todo' }],past:[...state.past,state.tasks] }
         case 'advance':
             return {
                 ...state, tasks: state.tasks.map((t) =>
                     t.id === action.id ? { ...t, status: NEXT[t.status] } : t,
-                )
+                ),
+                past:[...state.past,state.tasks]
             }
         case 'remove':
-            return { ...state, tasks: state.tasks.filter((t) => t.id !== action.id) }
+            return { ...state, tasks: state.tasks.filter((t) => t.id !== action.id),past:[...state.past,state.tasks]}
         case 'setFilter':
             if (FILTERS.includes(action.filter))
                 return { ...state, filter: action.filter }
             return state
         case 'clearDone':
-            return { ...state, tasks: state.tasks.filter((t) => t.status !== 'done') }
+            return { ...state, tasks: state.tasks.filter((t) => t.status !== 'done') , past:[...state.past,state.tasks]}
+        case 'undo':
+            if (state.past.length === 0)
+                return state
+
+            const prev=state.past[state.past.length-1]
+            return{...state,tasks:prev,past:state.past.slice(0,state.past.length-1)
+            }
     }
 }

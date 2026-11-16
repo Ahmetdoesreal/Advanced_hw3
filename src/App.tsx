@@ -84,6 +84,16 @@ function AddClearButton({ dispatch }: { dispatch: Dispatch<Action> }) {
         </form>
     );
 }
+function AddUndoButton({ dispatch }: { dispatch: Dispatch<Action> }) {
+    function undo() {
+        dispatch({ type: "undo" });
+    }
+    return (
+        <form action={undo}>
+            <button type="submit">Undo</button>
+        </form>
+    );
+}
 
 function TaskList(
     { tasks, dispatch }: { tasks: Task[]; dispatch: Dispatch<Action> },
@@ -133,9 +143,9 @@ export default function App() {
             <h1>Task Manager</h1>
             <AddForm dispatch={dispatch} />
             <AddClearButton dispatch={dispatch} />
+            <AddUndoButton dispatch={dispatch} />
             <TaskList tasks={state.tasks} dispatch={dispatch} />
-            <AddFilterRow dispatch={dispatch} state={state}>
-            </AddFilterRow>
+            <AddFilterRow dispatch={dispatch} state={state} />
             <FilteredTasks tasks={visibleTasks} dispatch={dispatch} />
         </main>
     );
