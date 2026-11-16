@@ -4,6 +4,7 @@ import { useReducer } from 'react'
 import { taskReducer, type Task, type Action ,type State,type Filter,initialState} from './taskReducer'
 import TaskRow from './TaskRow'
 import type { Dispatch } from 'react'
+import { FILTERS, filterTasks} from './filter'
 
 function AddForm({ dispatch }: { dispatch: Dispatch<Action> }) {
   function addTask(formData: FormData) {
@@ -16,6 +17,36 @@ function AddForm({ dispatch }: { dispatch: Dispatch<Action> }) {
       <button type="submit">Add</button>
     </form>
   )
+}
+function AddFilterRow({ dispatch }: { dispatch: Dispatch<Action> }) {
+  function FilterRow(filtername_param:String) {
+    console.log("eşşek")
+    let filtername=filtername_param as Filter
+    if (FILTERS.includes(filtername)){
+        console.log("at")
+        dispatch({
+            type:'setFilter',
+            filter:filtername
+        })
+    }
+  }
+    let buttons = []
+
+    for (const filter of FILTERS) {
+      buttons.push(
+        <button
+            value={filter}
+            type="submit"
+            onClick={() => FilterRow(filter)}>
+            {filter}
+        </button>)
+    }
+
+    return (
+        <div>
+            {buttons}
+        </div>
+    )
 }
 function AddClearButton({ dispatch }: { dispatch: Dispatch<Action> }) {
   function clearDone() {
@@ -44,14 +75,34 @@ function TaskList({ tasks, dispatch }: { tasks: Task[]; dispatch: Dispatch<Actio
   )
 }
 
+function FilteredTasks({ tasks, dispatch }: { tasks: Task[]; dispatch: Dispatch<Action> }) {
+  return (
+    <ul>
+      {tasks.map((t) => (
+
+        <TaskRow
+          key={t.id}
+          task={t}
+          onNext={() => dispatch({ type: 'advance', id: t.id })}
+          onDelete={() => dispatch({ type: 'remove', id: t.id })}
+        />
+      ))}
+    </ul>
+  )
+}
+
+
 export default function App() {
   const [state, dispatch] = useReducer(taskReducer, initialState)
+  const visibleTasks= filterTasks(state.tasks,state.filter)
   return (
     <main>
       <h1>Task Manager</h1>
       <AddForm dispatch={dispatch} />
       <AddClearButton dispatch={dispatch} />
       <TaskList tasks={state.tasks} dispatch={dispatch} />
+      <AddFilterRow dispatch={dispatch}></AddFilterRow>
+      <FilteredTasks tasks={visibleTasks} dispatch={dispatch} />
     </main>
   )
 }
