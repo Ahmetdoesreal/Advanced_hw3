@@ -4,6 +4,7 @@ import type { Status, Task } from './taskReducer'
 export type Filter = 'all' | Status
 
 export const FILTERS: Filter[] = ['all', 'todo', 'in-progress', 'done']
+export const FILTERSFRIENDLY: String[] = ['All', 'To do', 'In progress', 'Done']
 
 /** Return the tasks to show for the chosen filter. 'all' returns every task. */
 export function filterTasks(tasks: Task[], filter: Filter): Task[] {
