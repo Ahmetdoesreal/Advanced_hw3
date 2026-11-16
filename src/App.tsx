@@ -4,7 +4,7 @@ import { useReducer } from 'react'
 import { taskReducer, type Task, type Action ,type State,type Filter,initialState} from './taskReducer'
 import TaskRow from './TaskRow'
 import type { Dispatch } from 'react'
-import { FILTERS, filterTasks} from './filter'
+import { countByFilter, FILTERS, filterTasks} from './filter'
 
 function AddForm({ dispatch }: { dispatch: Dispatch<Action> }) {
   function addTask(formData: FormData) {
@@ -18,7 +18,7 @@ function AddForm({ dispatch }: { dispatch: Dispatch<Action> }) {
     </form>
   )
 }
-function AddFilterRow({ dispatch }: { dispatch: Dispatch<Action> }) {
+function AddFilterRow({ dispatch, FilterCounts}: { dispatch: Dispatch<Action>;FilterCounts: Record<Filter, number>}) {
   function FilterRow(filtername_param:String) {
     console.log("eşşek")
     let filtername=filtername_param as Filter
@@ -38,7 +38,7 @@ function AddFilterRow({ dispatch }: { dispatch: Dispatch<Action> }) {
             value={filter}
             type="submit"
             onClick={() => FilterRow(filter)}>
-            {filter}
+            {filter} ({FilterCounts[filter]})
         </button>)
     }
 
@@ -95,13 +95,14 @@ function FilteredTasks({ tasks, dispatch }: { tasks: Task[]; dispatch: Dispatch<
 export default function App() {
   const [state, dispatch] = useReducer(taskReducer, initialState)
   const visibleTasks= filterTasks(state.tasks,state.filter)
+  const FilterCounts = countByFilter(state.tasks)
   return (
     <main>
       <h1>Task Manager</h1>
       <AddForm dispatch={dispatch} />
       <AddClearButton dispatch={dispatch} />
       <TaskList tasks={state.tasks} dispatch={dispatch} />
-      <AddFilterRow dispatch={dispatch}></AddFilterRow>
+      <AddFilterRow dispatch={dispatch} FilterCounts={FilterCounts}></AddFilterRow>
       <FilteredTasks tasks={visibleTasks} dispatch={dispatch} />
     </main>
   )
