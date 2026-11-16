@@ -7,17 +7,17 @@ export const FILTERS: Filter[] = ['all', 'todo', 'in-progress', 'done']
 
 /** Return the tasks to show for the chosen filter. 'all' returns every task. */
 export function filterTasks(tasks: Task[], filter: Filter): Task[] {
-    if (filter === 'all') 
+    if (filter === 'all')
         return [...tasks]
     return [...tasks].filter((t) => t.status == filter)
 }
 
 /** Return how many tasks each filter button would show, for example { all: 3, todo: 1, ... }. */
 export function countByFilter(tasks: Task[]): Record<Filter, number> {
-    let counts: number[]=[]
-    for (const i in FILTERS) {        
+    let counts: number[] = []
+    for (const i in FILTERS) {
         const countingFilter = FILTERS[i];
-        counts.push(filterTasks(tasks,countingFilter).length);
+        counts.push(filterTasks(tasks, countingFilter).length);
     }
-  return { all: counts[0], todo: counts[1], 'in-progress': counts[2], done: counts[3] }
+    return { all: counts[0], todo: counts[1], 'in-progress': counts[2], done: counts[3] }
 }
